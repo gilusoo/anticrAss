@@ -1,5 +1,5 @@
 """
-Reads in a text file containing a list of SRA accessions. Then goes through one run at a time
+Reads in a text file containing a list of SRA accessions, then goes through one run at a time
 to collect the available metadata and writes the desired fields to a new file.
 """
 

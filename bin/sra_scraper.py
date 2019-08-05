@@ -47,7 +47,7 @@ if __name__ == '__main__':
     parser.add_argument('-i', '--input', help='Input SRA accession list')
     parser.add_argument('-o', '--output', help='Output csv file to write to')
     parser.add_argument('-a', '--attributes', nargs='+', help='List of desired attributes from each run;'
-                                                              'format: \'[<att1>,<att2>,...])\'')
+                                                              'separated by a single space')
 
     try:
         args = parser.parse_args()

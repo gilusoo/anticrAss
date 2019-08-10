@@ -20,7 +20,8 @@ def pull_metadata(acc_list, attributes, outfile):
         all_att_values = line.find_all('td')
         attributes_dict = {}
         for idx, att in enumerate(all_attributes):
-            attributes_dict[att.contents[0]] = all_att_values[idx].contents[0]
+            if all_att_values[idx]:
+                attributes_dict[att.contents[0]] = all_att_values[idx].contents[0]
         currline = run
         for item in attributes:
             data = attributes_dict.get(item, 'N/A')

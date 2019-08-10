@@ -1,57 +1,65 @@
-import re
 
+import sys
+import requests
+from bs4 import BeautifulSoup
+import argparse
 
+def sra_acc(infile):
+    with open(infile, 'r') as infile:
+       acc_list = [line.strip() for line in infile]
+    return acc_list
 
-def remove_tara(infile, outfile):
-    with open(infile, encoding='utf8') as infile, open(outfile, 'w', encoding='utf8') as outfile:
-        output = []
-        for line in infile:
-            line = line.strip().split('\t')
-            # print(line)
-            if re.findall('Tara',line[1]):
-                continue
-            else:
-                line = '\t'.join(line)
-                output.append(line)
-        for line in output:
-            outfile.write('{}\n'.format(line))
-    return
-
-def create_runs_dict(infile):
-    ann_to_runs = {}
-    with open(infile, 'r', encoding='utf8') as infile:
-        next(infile)
-        for line in infile:
-            line = line.strip().split(',')
-            ann_to_runs[line[1]] = ann_to_runs.get(line[1], []) + line[3:]
-    return ann_to_runs
-
-def pull_run_db(dict, cat_list, outfile):
-    run_db = []
-    for cat in cat_list:
-        for run in dict.get(cat, None):
-            run = run.replace('\"', '')
-            run_db.append(run)
+def pull_metadata(acc_list, attributes, outfile):
+    outlines = []
+    outfile = outfile + '_meta.csv'
+    for run in acc_list:
+        req = requests.get('https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?run={}'.format(run))
+        soup = BeautifulSoup(req.text, 'lxml')
+        line = soup.find("div", {'class': 'ph experiment'})
+        all_attributes = line.find_all('th')
+        all_att_values = line.find_all('td')
+        attributes_dict = {}
+        for idx, att in enumerate(all_attributes):
+            attributes_dict[att.contents[0]] = all_att_values[idx].contents[0]
+        currline = run
+        for item in attributes:
+            data = attributes_dict.get(item, 'N/A')
+            currline = currline + ',' + data
+        outlines.append(currline)
     with open(outfile, 'w') as outfile:
-        for run in run_db:
-            outfile.write('{}\n'.format(run))
-    return
+        for line in outlines:
+            outfile.write('{}\n'.format(line))
+    return outlines
+
+def sort_platforms(infile, outfile1, outfile2):
+    outfile1 = outfile1 + '_ion_torrent.txt'
+    outfile2 = outfile2 + '_illumina.txt'
+    with open(infile, 'r') as infile:
+        lines = [line.strip().split(',') for line in infile]
+        ion_torrent = [line[0] for line in lines if line[1] == 'Ion Torrent']
+        illumina = [line[0] for line in lines if line[1] == 'Illumina']
+    with open(outfile1, 'w') as out1:
+        for run in ion_torrent:
+            out1.write('{}\n'.format(run))
+    with open(outfile2, 'w') as out2:
+        for run in illumina:
+            out2.write('{}\n'.format(run))
+    return ion_torrent, illumina
+
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='')
+    parser.add_argument('-i', '--input', help='Input SRA accession list (txt file)')
+    parser.add_argument('-o', '--output', help='Prefix for all output files. Do not include extensions.')
+    parser.add_argument('-a', '--attributes', nargs='+', help='List of desired attributes from each run;'
+                                                              'separated by a single space')
 
-    annotations_file = 'sra_annotations.csv'
-    new_annotations_file = 'SRA_annotations_notara.csv'
-    condensed_file = 'SRA_notara_condensed.csv'
+    try:
+        args = parser.parse_args()
+    except:
+        parser.print_help()
+        sys.exit(1)
 
-    remove_tara(annotations_file, new_annotations_file)
-
-    # DB Categories
-    soil = ['soil']
-    gut = ['human gut']
-    fresh_water = ['fresh water']
-    marine = ['marine', 'marine benthic', 'marine coastal', 'marine deep', 'marine surface']
-
-    pull_run_db(create_runs_dict(condensed_file), soil, 'soil_db.txt')
-    pull_run_db(create_runs_dict(condensed_file), gut, 'gut_db.txt')
-    pull_run_db(create_runs_dict(condensed_file), fresh_water, 'fresh_water_db.txt')
-    pull_run_db(create_runs_dict(condensed_file), marine, 'marine_db.txt')
+    acc_list = sra_acc(args.input)
+    pull_metadata(acc_list, args.attributes, args.output)
+    sort_platforms(args.output + '_meta.csv', args.output, args.output)

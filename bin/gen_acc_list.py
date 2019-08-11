@@ -18,9 +18,6 @@ def db_to_list(infile):
 def rand_run(acc_list):
     return acc_list[random.randint(0, len(acc_list) - 1)]
 
-test_list = ['SRR3740069', 'SRR3740087', 'SRR3740096']
-print(rand_run(test_list))
-
 def scrape(run):
     req = requests.get('https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?run={}'.format(run))
     soup = BeautifulSoup(req.text, 'lxml')
@@ -34,8 +31,6 @@ def scrape(run):
         except:
             continue
     return attributes_dict
-
-print(scrape('SRR3740069'))
 
 def check_and_append(run, att_dict, platform):
     if att_dict['Platform'].startswith(platform):

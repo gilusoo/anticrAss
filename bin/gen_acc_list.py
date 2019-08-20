@@ -32,9 +32,12 @@ def scrape(run):
             continue
     return attributes_dict
 
-def check_and_append(run, att_dict, platform):
+def check_and_append(run, att_dict, platform, layout='Single'):
     if att_dict['Platform'].startswith(platform):
-        return run
+        if att_dict['Layout'] == layout:
+            return run
+        else:
+            return None
     else:
         return None
 
@@ -44,6 +47,7 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--output', help='Output filename for accession list')
     parser.add_argument('-n', '--num', type=int, help='Number of runs to include in accession list')
     parser.add_argument('-p', '--platform', help='Desired seq platform (Illumina or Ion)')
+    parser.add_argument('-l', '--layout', help='Desired library layout (Single or Paired)')
 
     try:
         args = parser.parse_args()

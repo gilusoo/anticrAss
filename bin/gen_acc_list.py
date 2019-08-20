@@ -34,7 +34,7 @@ def scrape(run):
 
 def check_and_append(run, att_dict, platform, layout='Single'):
     if att_dict['Platform'].startswith(platform):
-        if att_dict['Layout'] == layout:
+        if att_dict['Layout'] == layout.upper():
             return run
         else:
             return None

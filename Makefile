@@ -11,26 +11,26 @@ setup:
 # ---------DATA SELECTION------------
 
 illumina_gut_single:
-	python bin/gen_acc_list.py -i data/gut/gut_db.txt -o Experiment -n 10 -p Illumina -l Single
+	python3 bin/gen_acc_list.py -i data/gut/gut_db.txt -o Experiment -n 10 -p Illumina -l Single
 
 illumina_gut_paired:
-	python bin/gen_acc_list.py -i data/gut/gut_db.txt -o Experiment -n 10 -p Illumina -l Paired
+	python3 bin/gen_acc_list.py -i data/gut/gut_db.txt -o Experiment -n 10 -p Illumina -l Paired
 
 illumina_soil_single:
-	python bin/gen_acc_list.py -i data/soil/soil_db_illumina.txt -o Experiment -n 10 -p Illumina -l Single
+	python3 bin/gen_acc_list.py -i data/soil/soil_db_illumina.txt -o Experiment -n 10 -p Illumina -l Single
 
 illumina_soil_paired:
-	python bin/gen_acc_list.py -i data/soil/soil_db_illumina.txt -o Experiment -n 10 -p Illumina -l Paired
+	python3 bin/gen_acc_list.py -i data/soil/soil_db_illumina.txt -o Experiment -n 10 -p Illumina -l Paired
 
 illumina_marine_single:
-	python bin/gen_acc_list.py -i data/marine/marine_db_illumina.txt -o Experiment -n 10 -p Illumina -l Single
+	python3 bin/gen_acc_list.py -i data/marine/marine_db_illumina.txt -o Experiment -n 10 -p Illumina -l Single
 
 illumina_marine_paired:
-	python bin/gen_acc_list.py -i data/marine/marine_db_illumina.txt -o Experiment -n 10 -p Illumina -l Paired
+	python3 bin/gen_acc_list.py -i data/marine/marine_db_illumina.txt -o Experiment -n 10 -p Illumina -l Paired
 
 illumina_fresh_water_single:
-	python bin/gen_acc_list.py -i data/fresh_water/fresh_water_db_illumina.txt -o Experiment -n 10 -p Illumina -l Single
+	python3 bin/gen_acc_list.py -i data/fresh_water/fresh_water_db_illumina.txt -o Experiment -n 10 -p Illumina -l Single
 
 illumina_fresh_water_paired:
-	python bin/gen_acc_list.py -i data/fresh_water/fresh_water_db_illumina.txt -o Experiment -n 10 -p Illumina -l Paired
+	python3 bin/gen_acc_list.py -i data/fresh_water/fresh_water_db_illumina.txt -o Experiment -n 10 -p Illumina -l Paired
 	

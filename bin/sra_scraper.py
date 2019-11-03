@@ -57,3 +57,4 @@ if __name__ == '__main__':
 
     acclist = sra_acc(args.input)
     pull_metadata(acclist, args.output, args.attributes)
+    

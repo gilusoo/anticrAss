@@ -10,13 +10,13 @@ class Blast_Reader:
     def __init__(self, path):
         """
         Initializes the Blast_Reader class.
-        :param filename: The output file from BLAST on the command line.
+        :param path: The path to the directory of output file from BLAST on the command line.
         """
         self.name = path
 
     def hit_summary(self) -> list:
         """
-        Creates a list of list, where each inner list contains the information provided in the hit summary.
+        Creates a list of lists, where each inner list contains the information provided in the hit summary.
         :return: A list of lists
         """
         summary = [line.strip().split() for line in open(self.name) if re.match(r"[A-Z]{3}[0-9]{4}", line[0:8])]
@@ -96,13 +96,12 @@ if __name__ == '__main__':
         for name in files:
             if root == args.input:
                 file = os.path.join(root, name)
-                output = root + f'protein_hits/' + str(name.split('.')[0]) + '_blast.csv'
+                output = root + f'protein_hits/' + str(name.split('.')[0]) + '_blast.tsv'
                 with open(output, 'w') as outfile:
-                    outfile.write('Contig,Protein,Score,e-Value\n')
+                    outfile.write('Contig\tProtein\tScore\te-Value\n')
                 for line in open(file):
                     if line.startswith('Query= '):
                         curr_contig = br.get_contig(line)
                     if re.match(r"[A-Z]{3}[0-9]{4}", line[0:8]):
                         if float(line.split()[-2]) >= 40.0:
                             br.write_prots(curr_contig, br.prot_dict(curr_contig, line), output)
-

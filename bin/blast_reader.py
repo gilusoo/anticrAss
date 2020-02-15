@@ -75,8 +75,8 @@ class Blast_Reader:
         """
         with open(outfile, 'a') as outfile:
             for k, v in prot_dict.items():
-                for score, e in v.items():
-                    outfile.write(f'{contig}\t{score}\t{e}\n')
+                for prot, nums in v.items():
+                    outfile.write(f'{contig}\t{prot}\t{nums[0]}\t{nums[1]}\n')
         return
 
 if __name__ == '__main__':

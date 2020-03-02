@@ -104,7 +104,7 @@ class Heatmaps:
 
                     # print(run, sum(hits_dict[run].values()))
                         curr = []
-                        for contig in contigs:
+                        for contig in contigs.keys()[:20]:
                             if hits_dict[run][contig] < 200:
                                 curr.append(hits_dict[run][contig])
                             else:
@@ -113,7 +113,7 @@ class Heatmaps:
             lengths.append(count)
         for x in yaxis[:500]:
             print(x)
-        return pd.DataFrame(df, index=yaxis, columns=contigs), lengths
+        return pd.DataFrame(df, index=yaxis, columns=contigs.keys()[:20]), lengths
 
 
 if __name__ == '__main__':

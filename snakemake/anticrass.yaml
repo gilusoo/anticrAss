@@ -1,0 +1,4 @@
+directories:
+        fastq_files: fastq
+        assembly: assembly
+        blast_results: blast

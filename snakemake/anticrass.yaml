@@ -2,3 +2,6 @@ directories:
         fastq_files: fastq
         assembly: assembly
         blast_results: blast
+
+commands:
+        spades: /usr/local/genome/spades/current/bin/spades.py

@@ -105,7 +105,7 @@ class Heatmaps:
 
                     # print(run, sum(hits_dict[run].values()))
                         curr = []
-                        for contig in contigs[:20]:
+                        for contig in contigs.keys()[:20]:
                             # if hits_dict[run][contig] < 150:
                             curr.append(hits_dict[run][contig])
                             # else:

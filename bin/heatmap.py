@@ -2,6 +2,7 @@ import os
 import sys
 import pandas as pd
 import argparse
+from math import log10
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
@@ -52,6 +53,27 @@ class Heatmaps:
                 hit = line[1]
                 runs_to_hits[run][hit] = num_hits
         return runs_to_hits
+
+    def log_hits_dict(self, data, contigs):
+        '''
+        Creates a dictionary of the logarithmic data in the format {run: {contig: log_hits, ...}, ...}
+        :param data: Input file of bam_hits data (can be generated using sam_hits.py)
+        :param contigs: A list of contig names to be analyzed
+        :return: Dictionary
+        '''
+        runs_to_log = {}
+        with open(data) as infile:
+            next(infile)
+            for line in infile:
+                line = line.strip().split('\t')
+                num_hits = log10(int(line[3]))
+                if num_hits == 0:
+                    continue
+                run = os.path.basename(line[0]).split('.')[0]
+                runs_to_log[run] = runs_to_log.get(run, {contig: 0 for contig in contigs})
+                hit = line[1]
+                runs_to_log[run][hit] = num_hits
+        return runs_to_log
 
     def group_runs(self, annot):
         '''
@@ -124,6 +146,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('-f', '--fasta', help='Input fasta file of genome')
     parser.add_argument('-d', '--data', help='Input tsv file containing mapping data. (Obtained using sam_hits.py)')
+    parser.add_argument('-v', '--version', help='Version ("std" or "log")')
     parser.add_argument('-o', '--output', help='Output filename and path for the resulting heatmap')
 
     try:
@@ -147,12 +170,19 @@ if __name__ == '__main__':
     groups = hm.group_runs(r'sra_annotations.tsv')
     of_interest = ['human gut', 'human respiratory', 'human skin', 'animal', 'marine deep', 'marine surface', 'soil']
 
-    data = hm.heatmap_df(hm.hits_dict(args.data, hm.get_contigs(args.fasta)), hm.get_contigs(args.fasta),
-                         hm.group_runs('sra_annotations.tsv'), of_interest)[0]
-    breaks = hm.heatmap_df(hm.hits_dict(args.data, hm.get_contigs(args.fasta)), hm.get_contigs(args.fasta),
-                         hm.group_runs('sra_annotations.tsv'), of_interest)[1]
+    if args.version == 'std':
+        data = hm.heatmap_df(hm.hits_dict(args.data, hm.get_contigs(args.fasta)), hm.get_contigs(args.fasta),
+                             hm.group_runs('sra_annotations.tsv'), of_interest)[0]
+        breaks = hm.heatmap_df(hm.hits_dict(args.data, hm.get_contigs(args.fasta)), hm.get_contigs(args.fasta),
+                             hm.group_runs('sra_annotations.tsv'), of_interest)[1]
 
-    heat = sns.heatmap(data, cmap='inferno', vmin=0, vmax=150)
+    elif args.version =='log':
+        data = hm.heatmap_df(hm.log_hits_dict(args.data, hm.get_contigs(args.fasta)), hm.get_contigs(args.fasta),
+                             hm.group_runs('sra_annotations.tsv'), of_interest)[0]
+        breaks = hm.heatmap_df(hm.log_hits_dict(args.data, hm.get_contigs(args.fasta)), hm.get_contigs(args.fasta),
+                               hm.group_runs('sra_annotations.tsv'), of_interest)[1]
+
+    heat = sns.heatmap(data, cmap='inferno')
     plt.show(block=True)
     plt.hlines(breaks, xmin=0, xmax=len(hm.get_contigs(args.fasta)), colors='w')
     plt.savefig(args.output)

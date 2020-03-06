@@ -5,6 +5,7 @@ import argparse
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
+from matplotlib.colors import LogNorm
 import seaborn as sns
 
 
@@ -104,16 +105,16 @@ class Heatmaps:
 
                     # print(run, sum(hits_dict[run].values()))
                         curr = []
-                        for contig in contigs.keys()[:20]:
-                            if hits_dict[run][contig] < 200:
-                                curr.append(hits_dict[run][contig])
-                            else:
-                                curr.append(200)
+                        for contig in contigs[:20]:
+                            # if hits_dict[run][contig] < 150:
+                            curr.append(hits_dict[run][contig])
+                            # else:
+                            #     curr.append(150)
                         df.append(curr)
             lengths.append(count)
         for x in yaxis[:500]:
             print(x)
-        return pd.DataFrame(df, index=yaxis, columns=contigs.keys()[:20]), lengths
+        return pd.DataFrame(df, index=yaxis, columns=contigs), lengths
 
 
 if __name__ == '__main__':
@@ -140,13 +141,13 @@ if __name__ == '__main__':
 
     ##############
 
-    groups = hm.group_runs(r'../sra_annotations.tsv')
+    groups = hm.group_runs(r'sra_annotations.tsv')
     of_interest = ['human gut', 'human respiratory', 'human skin', 'animal', 'marine deep', 'marine surface', 'soil']
 
     data = hm.heatmap_df(hm.hits_dict(args.data, hm.get_contigs(args.fasta)), hm.get_contigs(args.fasta),
-                         hm.group_runs('../sra_annotations.tsv'), of_interest)[0]
+                         hm.group_runs('sra_annotations.tsv'), of_interest)[0]
     breaks = hm.heatmap_df(hm.hits_dict(args.data, hm.get_contigs(args.fasta)), hm.get_contigs(args.fasta),
-                         hm.group_runs('../sra_annotations.tsv'), of_interest)[1]
+                         hm.group_runs('sra_annotations.tsv'), of_interest)[1]
 
     heat = sns.heatmap(data, cmap='inferno', vmin=0, vmax=150)
     plt.show(block=True)

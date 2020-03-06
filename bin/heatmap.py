@@ -105,9 +105,12 @@ class Heatmaps:
 
                     # print(run, sum(hits_dict[run].values()))
                         curr = []
-                        for contig in contigs.keys()[:20]:
+                        contig_count = 0
+                        for contig in contigs:
                             # if hits_dict[run][contig] < 150:
-                            curr.append(hits_dict[run][contig])
+                            if contig_count < 21:
+                                curr.append(hits_dict[run][contig])
+                                contig_count += 1
                             # else:
                             #     curr.append(150)
                         df.append(curr)

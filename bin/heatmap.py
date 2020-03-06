@@ -66,9 +66,8 @@ class Heatmaps:
             next(infile)
             for line in infile:
                 line = line.strip().split('\t')
-                if int(line[3]) == 0:
-                    continue
-                num_hits = log10(int(line[3]))
+                num_hits = int(line[3])
+                num_hits = log10(num_hits) if num_hits > 0 else 0
                 run = os.path.basename(line[0]).split('.')[0]
                 runs_to_log[run] = runs_to_log.get(run, {contig: 0 for contig in contigs})
                 hit = line[1]

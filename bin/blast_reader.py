@@ -103,5 +103,6 @@ if __name__ == '__main__':
                     if line.startswith('Query= '):
                         curr_contig = br.get_contig(line)
                     if re.match(r"[A-Z]{3}[0-9]{4}", line[0:8]):
-                        if float(line.split()[-2]) >= 40.0:
+                        #if float(line.split()[-2]) >= 40.0:
+                        if float(line.split()[-1]) <= 0.50:
                             br.write_prots(curr_contig, br.prot_dict(curr_contig, line), output)

@@ -4,6 +4,10 @@ import argparse
 import json
 import pickle
 
+'''
+A simple python script to write JSON files to a dictionary in bulk and store the resulting dictionary as a pickle.
+'''
+
 def JSON_to_dict(file):
     with open(file) as infile:
         data = json.load(infile)

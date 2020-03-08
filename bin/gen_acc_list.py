@@ -3,6 +3,7 @@ import argparse
 import random
 from bs4 import BeautifulSoup
 import requests
+from time import sleep
 
 
 def rand_run(acc_list):
@@ -24,8 +25,11 @@ def scrape(run):
     req = requests.get('https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?run={}'.format(run))
     soup = BeautifulSoup(req.text, 'lxml')
     line = soup.find("div", {'class': 'ph experiment'})
-    all_attributes = line.find_all('th')
-    all_att_values = line.find_all('td')
+    try:
+        all_attributes = line.find_all('th')
+        all_att_values = line.find_all('td'
+    except:
+        return
     attributes_dict = {}
     for idx, att in enumerate(all_attributes):
         try:
@@ -75,8 +79,10 @@ if __name__ == '__main__':
                 if run not in used and check_and_append(run, scrape(run), args.platform):
                     outfile.write('{}\n'.format(run))
                     count += 1
+                    sleep(5)
         else:
             for run in acc_list:
                 if count < args.num and check_and_append(run, scrape(run), args.platform, args.layout):
                     outfile.write('{}\n'.format(run))
                     count += 1
+                    sleep(5)

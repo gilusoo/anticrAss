@@ -27,7 +27,7 @@ def scrape(run):
     line = soup.find("div", {'class': 'ph experiment'})
     try:
         all_attributes = line.find_all('th')
-        all_att_values = line.find_all('td'
+        all_att_values = line.find_all('td')
     except:
         return
     attributes_dict = {}

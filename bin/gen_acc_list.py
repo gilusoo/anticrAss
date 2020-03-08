@@ -1,24 +1,26 @@
-"""
-This script allows for the generation of a random accession list to be used within the anticrAss pipeline. SRA runs
-from a large database file are randomly selected. A web scrape is then performed to ensure correct sequencing platform.
-Runs that fit the necessary criteria are then written to an output file for future use.
-"""
-
 import sys
-import random
-import requests
-from bs4 import BeautifulSoup
 import argparse
+import random
+from bs4 import BeautifulSoup
+import requests
 
-def db_to_list(infile):
-    with open(infile, 'r') as infile:
-        acc_list = [line.strip() for line in infile]
-    return acc_list
 
 def rand_run(acc_list):
+    '''
+    Produces a random accession from a provided list or database file.
+    :param acc_list: Input file with one accession per line
+    :return: A single random accession (str)
+    '''
+    acc_list = [x.strip() for x in acc_list.readlines()]
     return acc_list[random.randint(0, len(acc_list) - 1)]
 
+
 def scrape(run):
+    '''
+    Perform a web scrape for checking metadata.
+    :param run:
+    :return:
+    '''
     req = requests.get('https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?run={}'.format(run))
     soup = BeautifulSoup(req.text, 'lxml')
     line = soup.find("div", {'class': 'ph experiment'})
@@ -32,22 +34,30 @@ def scrape(run):
             continue
     return attributes_dict
 
-def check_and_append(run, att_dict, platform, layout='Single'):
-    if att_dict['Platform'].startswith(platform):
-        if att_dict['Layout'] == layout.upper():
-            return run
-        else:
-            return None
+
+def check_and_append(acc, att_dict, platform, layout='Single'):
+    '''
+    Checks that metadata matches criteria and adds appropriate runs to output accession list
+    :param acc:
+    :param att_dict:
+    :param platform:
+    :param layout:
+    :return:
+    '''
+    if att_dict['Platform'].startswith(platform) and att_dict['Layout'] == layout.upper():
+        return acc
     else:
         return None
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('-i', '--input', help='Input SRA database file (txt file)')
-    parser.add_argument('-o', '--output', help='Output filename for accession list')
+    parser.add_argument('-i', '--input', help='Input SRA accession list or database file with one accession per line')
+    parser.add_argument('-o', '--output', help='Output txt file to write accession list to')
     parser.add_argument('-n', '--num', type=int, help='Number of runs to include in accession list')
     parser.add_argument('-p', '--platform', help='Desired seq platform (Illumina or Ion)')
     parser.add_argument('-l', '--layout', help='Desired library layout (Single or Paired)')
+    parser.add_argument('-r', '--random', help='Use to have the acc list generated in random order from input file')
 
     try:
         args = parser.parse_args()
@@ -55,14 +65,18 @@ if __name__ == '__main__':
         parser.print_help()
         sys.exit(1)
 
-    acc_list = db_to_list(args.input)
+    acc_list = [x.strip() for x in args.input]
     count = 0
+    used = []
     with open(args.output, 'a') as outfile:
-        while count < args.num:
-            run = rand_run(acc_list)
-            if check_and_append(run, scrape(run), args.platform):
-                outfile.write('{}\n'.format(run))
-                count += 1
-            else:
-                continue
-
+        if args.random:
+            if count < args.num:
+                run = rand_run(acc_list)
+                if run not in used and check_and_append(run, scrape(run), args.platform):
+                    outfile.write('{}\n'.format(run))
+                    count += 1
+        else:
+            for run in acc_list:
+                if count < args.num and check_and_append(run, scrape(run), args.platform, args.layout):
+                    outfile.write('{}\n'.format(run))
+                    count += 1

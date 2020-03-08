@@ -31,7 +31,7 @@ if __name__ == '__main__':
             for root2, dirs2, files2 in os.walk(directory):
 
                 for name in files2:
-                    if root == args.input and name[-5:] == '.json':
+                    if root == os.path.join(args.input, directory) and name[-5:] == '.json':
                         file = os.path.join(root, name)
                         temp = JSON_to_dict(file)
                         metadata_dict = {**metadata_dict, **temp}

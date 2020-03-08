@@ -28,13 +28,14 @@ if __name__ == '__main__':
 
     for root, dirs, files in os.walk(args.input):
         for directory in dirs:
-            for root2, dirs2, files2 in os.walk(directory):
-
+            for root2, dirs2, files2 in os.walk(os.path.join(root, directory)):
                 for name in files2:
-                    if root == os.path.join(args.input, directory) and name[-5:] == '.json':
-                        file = os.path.join(root, name)
+                    print(len(metadata_dict))
+                    if root2 == os.path.join(args.input, directory) and name[-5:] == '.json':
+                        file = os.path.join(root2, name)
                         temp = JSON_to_dict(file)
                         metadata_dict = {**metadata_dict, **temp}
+
 
     metafile = open('metaPickle.p', 'ab')
     pickle.dump(metadata_dict, metafile)

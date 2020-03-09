@@ -29,7 +29,7 @@ def scrape(run):
         all_attributes = line.find_all('th')
         all_att_values = line.find_all('td')
     except:
-        return
+        return False
     attributes_dict = {}
     for idx, att in enumerate(all_attributes):
         try:
@@ -76,13 +76,14 @@ if __name__ == '__main__':
         if args.random:
             if count < args.num:
                 run = rand_run(acc_list)
-                if run not in used and check_and_append(run, scrape(run), args.platform):
+                scrape_results = scrape(run) if scrape(run) else
+                if run not in used and check_and_append(run, scrape_results, args.platform):
                     outfile.write('{}\n'.format(run))
                     count += 1
                     sleep(5)
         else:
             for run in acc_list:
-                if count < args.num and check_and_append(run, scrape(run), args.platform, args.layout):
+                if count < args.num and scrape(run) and check_and_append(run, scrape(run), args.platform, args.layout):
                     outfile.write('{}\n'.format(run))
                     count += 1
                     sleep(5)

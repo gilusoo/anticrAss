@@ -69,7 +69,7 @@ if __name__ == '__main__':
         parser.print_help()
         sys.exit(1)
 
-    acc_list = [x.strip() for x in args.input]
+    acc_list = [x.strip() for x in open(args.input).readlines()]
     count = 0
     used = []
     with open(args.output, 'a') as outfile:
@@ -79,10 +79,12 @@ if __name__ == '__main__':
                 if run not in used and check_and_append(run, scrape(run), args.platform):
                     outfile.write('{}\n'.format(run))
                     count += 1
-                    sleep(5)
+                    sleep(1)
         else:
             for run in acc_list:
                 if count < args.num and scrape(run) and check_and_append(run, scrape(run), args.platform, args.layout):
                     outfile.write('{}\n'.format(run))
                     count += 1
-                    sleep(5)
+                    sleep(1)
+                else:
+                    continue

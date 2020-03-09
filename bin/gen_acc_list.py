@@ -76,8 +76,7 @@ if __name__ == '__main__':
         if args.random:
             if count < args.num:
                 run = rand_run(acc_list)
-                scrape_results = scrape(run) if scrape(run) else
-                if run not in used and check_and_append(run, scrape_results, args.platform):
+                if run not in used and check_and_append(run, scrape(run), args.platform):
                     outfile.write('{}\n'.format(run))
                     count += 1
                     sleep(5)

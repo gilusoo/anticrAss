@@ -1,7 +1,9 @@
 directories:
         fastq_files: fastq
         assembly: assembly
+        bowtie: bowtie
         blast_results: blast
+        concoct_output: concoct
 
 commands:
         spades: /usr/local/genome/spades/current/bin/spades.py

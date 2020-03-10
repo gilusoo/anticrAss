@@ -149,13 +149,14 @@ rule cut_contigs:
 
 rule cov_table:
 	input:
-		join(CONCOCTDIR, "contigs_1k.bed")
+		join(CONCOCTDIR, "contigs_1k.bed"),
+		expand(join(BOWTIEDIR, "BAM_files/{sample}.bam.bai"), sample=IDS)
 	output:
 		join(CONCOCTDIR, "coverage_table.tsv")
 	params:
-		bam_files = join(BOWTIEDIR, "BAM_files/*.bam")
+		bam = expand(join(BOWTIEDIR, "BAM_files/{sample}.bam"), sample=IDS)
 	shell:
-		"concoct_coverage_table.py {input} {params.bam_files} > {output}"
+		"concoct_coverage_table.py {input[0]} {params.bam} > {output}"
 
 rule concoct:
 	input:

@@ -4,6 +4,7 @@ directories:
         bowtie: bowtie
         blast_results: blast
         concoct_output: concoct
+        benchmark: benchmark
 
 commands:
         spades: /usr/local/genome/spades/current/bin/spades.py

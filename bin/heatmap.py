@@ -175,7 +175,7 @@ if __name__ == '__main__':
         breaks = hm.heatmap_df(hm.hits_dict(args.data, hm.get_contigs(args.fasta)), hm.get_contigs(args.fasta),
                              hm.group_runs('sra_annotations.tsv'), of_interest)[1]
 
-        heat = sns.heatmap(data, cmap='inferno', vmin=0, vmax=100)
+        heat = sns.heatmap(data, cmap='inferno', vmin=0, vmax=150)
         plt.show(block=True)
         plt.hlines(breaks, xmin=0, xmax=len(hm.get_contigs(args.fasta)), colors='w')
         plt.savefig(args.output)

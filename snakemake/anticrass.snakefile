@@ -28,6 +28,7 @@ CONCOCTDIR = config["directories"]["concoct_output"]
 BENCHDIR = config["directories"]["benchmark"]
 
 SPADES = config["commands"]["spades"]
+BLASTREADER = config["commands"]["blast_reader"]
 
 rule all:
 	input: 
@@ -46,7 +47,8 @@ rule all:
 		join(CONCOCTDIR, "clustering_gt1000.csv"),
 		join(CONCOCTDIR, "clustering_merged.csv"),
 		expand(join(CONCOCTDIR, "fasta_bins/{bin}.fa"), bin=range(0,8)),
-		expand(join(BLASTDIR, "{bin}.out"), bin=range(0,8))
+		expand(join(BLASTDIR, "{bin}.out"), bin=range(0,8)),
+		expand(join(BLASTDIR, "protein_hits/{bin}_blast.tsv"), bin=range(0,8))
 
 rule download:
 	output:
@@ -228,6 +230,20 @@ rule blast:
 		join(BENCHDIR, "{bin}.blast.benchmark.txt")
 	shell:
 		"blastx -db {params.blast_db} -query {input} -out {output}"
+
+
+rule readblast:
+	input:
+		expand(join(BLASTDIR, "{bin}.out"), bin=range(0,8))
+	output:
+		join(BLASTDIR, "protein_hits/{bin}_blast.tsv")
+	params:
+		blast_reader = BLASTREADER,
+		blastdir = BLASTDIR + "/"
+	benchmark:
+		join(BENCHDIR, "{bin}.readblast.benchmark.txt")
+	shell:
+		"set +o pipefail; mkdir blast/protein_hits/ | python {params.blast_reader} -i  {params.blastdir} -o {output}"
 
 
 

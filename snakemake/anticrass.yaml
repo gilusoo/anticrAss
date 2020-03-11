@@ -4,11 +4,6 @@ directories:
         bowtie: bowtie
         blast_results: blast
         concoct_output: concoct
-        benchmark: benchmark
-        phage_genes: ~/anticrAss/new/blast/phage_genes
-
-databases:
-        blast: phage_genes
 
 commands:
         spades: /usr/local/genome/spades/current/bin/spades.py

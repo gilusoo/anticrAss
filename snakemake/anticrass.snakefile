@@ -234,7 +234,7 @@ rule blast:
 
 rule readblast:
 	input:
-		expand(join(BLASTDIR, "{bin}.out"), bin=range(0,8))
+		join(BLASTDIR, "{bin}.out")
 	output:
 		join(BLASTDIR, "protein_hits/{bin}_blast.tsv")
 	params:

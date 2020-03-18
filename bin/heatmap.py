@@ -117,23 +117,19 @@ class Heatmaps:
                 return sum(innerd.values())
 
             for run in sorted(hits_dict.keys(), key=custom_sort, reverse=True):
-                # print(run, sum(hits_dict[run].values()))
                 if run in runs:
                     if cat_count < 1000:
                         count += 1
                         cat_count =+ 1
                         yaxis.append(run)
 
-                    # print(run, sum(hits_dict[run].values()))
                         curr = []
                         contig_count = 0
                         for contig in contigs:
                             # if hits_dict[run][contig] < 150:
-                            if contig_count < 21:
-                                curr.append(hits_dict[run][contig])
-                                contig_count += 1
-                            # else:
-                            #     curr.append(150)
+                            # if contig_count < 21:
+                            curr.append(hits_dict[run][contig])
+                            contig_count += 1
                         df.append(curr)
             lengths.append(count)
         for x in yaxis[:500]:
@@ -156,15 +152,6 @@ if __name__ == '__main__':
 
     hm = Heatmaps(args.fasta)
 
-    test = hm.get_contigs(args.fasta)
-    # print(test)
-    # print(len(test))
-    # print(hm.hits_dict(args.data, hm.get_contigs(args.fasta)))
-    # print(hm.heatmap_df(hm.hits_dict(args.data, hm.get_contigs(args.fasta)), hm.get_contigs(args.fasta)))
-
-    # print(hm.group_runs('../sra_annotations.tsv'))      # The annotations file must be in same directory as the script
-
-    ##############
 
     groups = hm.group_runs(r'sra_annotations.tsv')
     of_interest = ['human gut', 'human respiratory', 'human skin', 'animal', 'marine deep', 'marine surface', 'soil']
@@ -175,7 +162,7 @@ if __name__ == '__main__':
         breaks = hm.heatmap_df(hm.hits_dict(args.data, hm.get_contigs(args.fasta)), hm.get_contigs(args.fasta),
                              hm.group_runs('sra_annotations.tsv'), of_interest)[1]
 
-        heat = sns.heatmap(data, cmap='inferno', vmin=0, vmax=150)
+        heat = sns.heatmap(data, cmap='inferno', vmin=0, vmax=100)
         plt.show(block=True)
         plt.hlines(breaks, xmin=0, xmax=len(hm.get_contigs(args.fasta)), colors='w')
         plt.savefig(args.output)
